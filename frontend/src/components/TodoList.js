@@ -1,18 +1,38 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 import './TodoList.css';
+import TodoItem from './TodoItem';
 
-function TodoList() {
+function TodoList(props) {
+    
+    let {todos,updateTodos} = props;
 
+    let handleCompleted = async (id) => {
+        let res = await axios.put(`http://localhost:5000/todo/${id}`);
+        updateTodos(res.data)
+    }
 
+    let handleDelete = async (id) => {
+        let res = await axios.delete(`http://localhost:5000/todo/${id}`);
+        updateTodos(res.data)
+    }
 
     return (
         <ul className="list-group">
-            <li className="list-group-item">Cras justo odio</li>
-            <li className="list-group-item">Dapibus ac facilisis in</li>
-            <li className="list-group-item">Morbi leo risus</li>
-            <li className="list-group-item">Porta ac consectetur ac</li>
-            <li className="list-group-item">Vestibulum at eros</li>
+            {
+                todos.map((todo, key) => {
+                    return (
+                        <TodoItem 
+                            key={key} 
+                            id={key} 
+                            todo={todo} 
+                            handleCompleted={handleCompleted} 
+                            handleDelete={handleDelete}  
+                        />
+                    )
+                })
+            }
         </ul>
     );
 }

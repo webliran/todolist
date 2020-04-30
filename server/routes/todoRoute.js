@@ -1,5 +1,6 @@
 const server = require('express');
 const TodoRoute = server.Router();
+const TodoModel = require('../models/TodoModel');
 
 let todoList = [
     {
@@ -16,8 +17,8 @@ let todoList = [
     }
 ];
 
-TodoRoute.get("/", function (req, res) {
-    
+TodoRoute.get("/", async function (req, res) {
+    let todoList = await TodoModel.find({});
     res.json(todoList);
 })
 
@@ -29,14 +30,14 @@ TodoRoute.get("/:id", function (req, res) {
 TodoRoute.post("/", function (req, res) {
     //call to db
     let {todoText,completed} = req.body;
-    todoList.push({todoText,completed})
+    todoList.push({todoText,completed});
     res.json(todoList);
 })
 
 TodoRoute.put("/:id",function(req,res){
     let id = req.params.id;
     todoList[id].completed = !todoList[id].completed;
-    res.json(todoList[id]);
+    res.json(todoList);
 })
 
 TodoRoute.delete("/:id",function(req,res){
@@ -45,7 +46,7 @@ TodoRoute.delete("/:id",function(req,res){
     todoList = todoList.filter((todo,key) => {
         return key != id;
     })
-    res.json({status:true,msg:`Todo #${id} has been deleted`});
+    res.json(todoList);
 })
 
 
