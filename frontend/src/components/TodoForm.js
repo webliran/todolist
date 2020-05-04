@@ -13,7 +13,7 @@ function TodoForm(props) {
     let handleCreateTodo = async (e) => {
         e.preventDefault();
         let res = await axios.post('http://localhost:5000/todo',{
-            todoText: refInputElem.current.value,
+            todoText: todoText,
             completed: false,
         });
 

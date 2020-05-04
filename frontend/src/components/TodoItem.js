@@ -1,7 +1,5 @@
 import React from 'react';
 
-
-
 function TodoItem(props) {
 
     let {todo,id,handleDelete,handleCompleted} = props;

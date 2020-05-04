@@ -19,34 +19,45 @@ let todoList = [
 
 TodoRoute.get("/", async function (req, res) {
     let todoList = await TodoModel.find({});
-    res.json(todoList);
+    res.status(200).json(todoList);
 })
 
-TodoRoute.get("/:id", function (req, res) {
+TodoRoute.get("/:id", async function (req, res) {
     let id = req.params.id;
-    res.json(todoList[id]);
+    let currentTodo = await TodoModel.findOne({_id: id});
+    res.status(200).json(currentTodo);
 })
 
-TodoRoute.post("/", function (req, res) {
-    //call to db
-    let {todoText,completed} = req.body;
-    todoList.push({todoText,completed});
-    res.json(todoList);
+TodoRoute.post("/", async function (req, res) {
+    
+    let newTodoModule = new TodoModel(req.body);
+    let newTodo = await newTodoModule.save();
+
+    res.status(200).json(newTodo);
 })
 
-TodoRoute.put("/:id",function(req,res){
+TodoRoute.put("/:id",async function(req,res){
     let id = req.params.id;
-    todoList[id].completed = !todoList[id].completed;
-    res.json(todoList);
+    try{
+        let toUpdateTodo = await TodoModel.findOne({_id: id});
+
+        let updatedTodo = await TodoModel.updateOne({_id:id},{ 
+           $set: {
+                completed : !toUpdateTodo.completed
+           } 
+        })
+        res.status(200).json(todoList);
+    } catch(err){
+        res.status(500).json({err:err})
+    }
+   
+    
 })
 
-TodoRoute.delete("/:id",function(req,res){
+TodoRoute.delete("/:id",async function(req,res){
     let id = req.params.id;
-    //delete todoList[id];
-    todoList = todoList.filter((todo,key) => {
-        return key != id;
-    })
-    res.json(todoList);
+    let deletedTodo = await TodoModel.remove({_id:id})
+    res.status(200).json(deletedTodo);
 })
 
 
